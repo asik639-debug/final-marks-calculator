@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Final Marks Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root {
+      --bg: #191919;
+      --card: #222;
+      --border: #2f2f2f;
+      --text: #eaeaea;
+      --muted: #9a9a9a;
+      --accent: #4f46e5;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: transparent;
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    h2 {
+      margin-bottom: 12px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .header {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      background: #2a2a2a;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 14px;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 8px 6px;
+      text-align: left;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    @media (max-width: 600px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+
+  <h2>Final Marks Calculator</h2>
+
+  <div class="card">
+    <p style="color:var(--muted); font-size:13px;">
+      Optional: paste values in this order (total, obtained per line)
+    </p>
+    <textarea id="pasteBox" rows="6"
+      placeholder="20 15
+20 18
+15 12
+10 8
+50 35
+20 18
+30 25
+10 9"></textarea>
+
+    <button onclick="pasteInputs()">Paste Inputs</button>
+  </div>
+
+  <div class="card">
+    <div class="grid header">
+      <div>Component</div>
+      <div>Total Marks</div>
+      <div>Marks Obtained</div>
+    </div>
+
+    <div class="grid"><div>Class Test 1 (2.5%)</div><input id="ct1_total"><input id="ct1_obt"></div>
+    <div class="grid"><div>Class Test 2 (2.5%)</div><input id="ct2_total"><input id="ct2_obt"></div>
+    <div class="grid"><div>Class Test 3 (2.5%)</div><input id="ct3_total"><input id="ct3_obt"></div>
+    <div class="grid"><div>Class Test 4 (2.5%)</div><input id="ct4_total"><input id="ct4_obt"></div>
+    <div class="grid"><div>Midterm (20%)</div><input id="mid_total"><input id="mid_obt"></div>
+    <div class="grid"><div>Assignments / Case / ICP (10%)</div><input id="asg_total"><input id="asg_obt"></div>
+    <div class="grid"><div>Project / Term Paper (10%)</div><input id="proj_total"><input id="proj_obt"></div>
+    <div class="grid"><div>Attendance (10%)</div><input id="att_total"><input id="att_obt"></div>
+
+    <button onclick="calculate()">Calculate</button>
+  </div>
+
+  <div class="card">
+    <h3>Required Final Exam Marks (out of 100)</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Grade</th>
+          <th>Minimum Total %</th>
+          <th>Required in Final</th>
+        </tr>
+      </thead>
+      <tbody id="results"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+  const fields = [
+    ct1_total, ct1_obt, ct2_total, ct2_obt,
+    ct3_total, ct3_obt, ct4_total, ct4_obt,
+    mid_total, mid_obt,
+    asg_total, asg_obt,
+    proj_total, proj_obt,
+    att_total, att_obt
+  ];
+
+  function pasteInputs() {
+    const nums = pasteBox.value
+      .trim()
+      .split(/\s+/)
+      .map(Number);
+
+    fields.forEach((f, i) => {
+      if (!isNaN(nums[i])) f.value = nums[i];
+    });
+  }
+
+  function score(obt, total, weight) {
+    if (!total) return 0;
+    return (obt / total) * weight;
+  }
+
+  function calculate() {
+    const inCourse =
+      score(+ct1_obt.value, +ct1_total.value, 2.5) +
+      score(+ct2_obt.value, +ct2_total.value, 2.5) +
+      score(+ct3_obt.value, +ct3_total.value, 2.5) +
+      score(+ct4_obt.value, +ct4_total.value, 2.5) +
+      score(+mid_obt.value, +mid_total.value, 20) +
+      score(+asg_obt.value, +asg_total.value, 10) +
+      score(+proj_obt.value, +proj_total.value, 10) +
+      score(+att_obt.value, +att_total.value, 10);
+
+    const grades = [
+      ["A+", 80], ["A", 75], ["A-", 70], ["B+", 65],
+      ["B", 60], ["B-", 55], ["C+", 50], ["C", 45], ["D", 40]
+    ];
+
+    results.innerHTML = "";
+
+    grades.forEach(g => {
+      const required = Math.round(((g[1] - inCourse) / 40) * 100);
+      results.innerHTML += `
+        <tr>
+          <td>${g[0]}</td>
+          <td>${g[1]}%</td>
+          <td>${required}%</td>
+        </tr>`;
+    });
+  }
+</script>
+</body>
+</html>
