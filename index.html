@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Final Marks Calculator</title>
+  <title>Final e koto lagbe?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
@@ -12,13 +12,13 @@
       --border: #2f2f2f;
       --text: #eaeaea;
       --muted: #9a9a9a;
-      --accent: #4f46e5;
+      --accent: ##1A4661;
     }
 
     body {
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: transparent;
+      background: var(--bg);
       color: var(--text);
     }
 
@@ -112,17 +112,17 @@
 
   <div class="card">
     <p style="color:var(--muted); font-size:13px;">
-      Optional: paste values in this order (total, obtained per line)
+      Completely optional (just makes things faster): Copy and paste your marks in this order (total marks then obtained marks) in each line
     </p>
     <textarea id="pasteBox" rows="6"
       placeholder="20 15
 20 18
 15 12
 10 8
-50 35
-20 18
-30 25
-10 9"></textarea>
+20 5
+10 8
+15 12
+10 9.2"></textarea>
 
     <button onclick="pasteInputs()">Paste Inputs</button>
   </div>
@@ -134,14 +134,14 @@
       <div>Marks Obtained</div>
     </div>
 
-    <div class="grid"><div>Class Test 1 (2.5%)</div><input id="ct1_total"><input id="ct1_obt"></div>
-    <div class="grid"><div>Class Test 2 (2.5%)</div><input id="ct2_total"><input id="ct2_obt"></div>
-    <div class="grid"><div>Class Test 3 (2.5%)</div><input id="ct3_total"><input id="ct3_obt"></div>
-    <div class="grid"><div>Class Test 4 (2.5%)</div><input id="ct4_total"><input id="ct4_obt"></div>
-    <div class="grid"><div>Midterm (20%)</div><input id="mid_total"><input id="mid_obt"></div>
-    <div class="grid"><div>Assignments / Case / ICP (10%)</div><input id="asg_total"><input id="asg_obt"></div>
-    <div class="grid"><div>Project / Term Paper (10%)</div><input id="proj_total"><input id="proj_obt"></div>
-    <div class="grid"><div>Attendance (10%)</div><input id="att_total"><input id="att_obt"></div>
+    <div class="grid"><div>Class Test 1 (2.5%)</div><input type="number" id="ct1_total" placeholder="Total Marks of the CT"><input type="number" id="ct1_obt" placeholder="How much you got in the CT"></div>
+    <div class="grid"><div>Class Test 2 (2.5%)</div><input type="number" id="ct2_total" placeholder="Total Marks of the CT"><input type="number" id="ct2_obt" placeholder="How much you got in the CT"></div>
+    <div class="grid"><div>Class Test 3 (2.5%)</div><input type="number" id="ct3_total" placeholder="Total Marks of the CT"><input type="number" id="ct3_obt" placeholder="How much you got in the CT"></div>
+    <div class="grid"><div>Class Test 4 (2.5%)</div><input type="number" id="ct4_total" placeholder="Total Marks of the CT"><input type="number" id="ct4_obt" placeholder="How much you got in the CT"></div>
+    <div class="grid"><div>Midterm (20%)</div><input type="number" id="mid_total" placeholder="Total Marks of the Midterm"><input type="number" id="mid_obt" placeholder="How much you got in the Midterm"></div>
+    <div class="grid"><div>Assignments / Case / ICP (10%)</div><input type="number" id="asg_total" placeholder="Total Marks"><input type="number" id="asg_obt" placeholder="How much you got here"></div>
+    <div class="grid"><div>Project / Term Paper (10%)</div><input type="number" id="proj_total" placeholder="Total Marks"><input type="number" id="proj_obt" placeholder="How much you got here"></div>
+    <div class="grid"><div>Attendance (10%)</div><input type="number" id="att_total" placeholder="Total Marks"><input type="number" id="att_obt" placeholder="How much you got here"></div>
 
     <button onclick="calculate()">Calculate</button>
   </div>
@@ -219,3 +219,4 @@
 </script>
 </body>
 </html>
+
