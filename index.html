@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Final e koto lagbe?</title>
+  <title>Final Marks Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
@@ -12,7 +12,7 @@
       --border: #2f2f2f;
       --text: #eaeaea;
       --muted: #9a9a9a;
-      --accent: ##1A4661;
+      --accent: #1A4661;
     }
 
     body {
@@ -97,6 +97,12 @@
       font-weight: 500;
     }
 
+    #inCourseDisplay {
+      font-size: 15px;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
     @media (max-width: 600px) {
       .grid {
         grid-template-columns: 1fr;
@@ -108,23 +114,24 @@
 <body>
 <div class="container">
 
-  <h2>Final Marks Calculator</h2>
+  <h2>Final e koto lagbe?</h2>
 
   <div class="card">
     <p style="color:var(--muted); font-size:13px;">
-      Completely optional (just makes things faster): Copy and paste your marks in this order (total marks then obtained marks) in each line
+      Completely optional: Copy and paste the whole marks table here (headers too)
     </p>
     <textarea id="pasteBox" rows="6"
-      placeholder="20 15
-20 18
-15 12
-10 8
-20 5
-10 8
-15 12
-10 9.2"></textarea>
+placeholder="#	Exam Name	Exam Mark	Obtained Mark
+1	Class Test 1	2.50	1
+2	Class Test 2	2.50	0.5
+3	Class Test 3	10	3
+4	Class Test 4	2.50	2.5
+5	Mid Term	20.00	18
+6	Assignments/Case Study/In-Class Participation	10.00	8
+7	Project paper/Term Paper (Individual) including Presentation	10.00	9
+8	Attendance	10.00	9.2"></textarea>
 
-    <button onclick="pasteInputs()">Paste Inputs</button>
+    <button onclick="pasteInputs()">Paste</button>
   </div>
 
   <div class="card">
@@ -147,13 +154,20 @@
   </div>
 
   <div class="card">
-    <h3>Required Final Exam Marks (out of 100)</h3>
+    <h3>Results</h3>
+
+    <div id="inCourseDisplay">
+      In-Course Marks: 0 / 60
+    </div>
+
+    <h4>Required Final Exam Marks (out of 100)</h4>
+
     <table>
       <thead>
         <tr>
           <th>Grade</th>
-          <th>Minimum Total %</th>
-          <th>Required in Final</th>
+          <th>Grade Percentage</th>
+          <th>What u need in the Final</th>
         </tr>
       </thead>
       <tbody id="results"></tbody>
@@ -163,60 +177,86 @@
 </div>
 
 <script>
-  const fields = [
-    ct1_total, ct1_obt, ct2_total, ct2_obt,
-    ct3_total, ct3_obt, ct4_total, ct4_obt,
-    mid_total, mid_obt,
-    asg_total, asg_obt,
-    proj_total, proj_obt,
-    att_total, att_obt
+
+function pasteInputs() {
+
+  const lines = pasteBox.value.trim().split("\n");
+
+  const totals = [
+    ct1_total, ct2_total, ct3_total, ct4_total,
+    mid_total, asg_total, proj_total, att_total
   ];
 
-  function pasteInputs() {
-    const nums = pasteBox.value
-      .trim()
-      .split(/\s+/)
-      .map(Number);
+  const obtained = [
+    ct1_obt, ct2_obt, ct3_obt, ct4_obt,
+    mid_obt, asg_obt, proj_obt, att_obt
+  ];
 
-    fields.forEach((f, i) => {
-      if (!isNaN(nums[i])) f.value = nums[i];
-    });
-  }
+  let index = 0;
 
-  function score(obt, total, weight) {
-    if (!total) return 0;
-    return (obt / total) * weight;
-  }
+  lines.forEach(line => {
 
-  function calculate() {
-    const inCourse =
-      score(+ct1_obt.value, +ct1_total.value, 2.5) +
-      score(+ct2_obt.value, +ct2_total.value, 2.5) +
-      score(+ct3_obt.value, +ct3_total.value, 2.5) +
-      score(+ct4_obt.value, +ct4_total.value, 2.5) +
-      score(+mid_obt.value, +mid_total.value, 20) +
-      score(+asg_obt.value, +asg_total.value, 10) +
-      score(+proj_obt.value, +proj_total.value, 10) +
-      score(+att_obt.value, +att_total.value, 10);
+    if (!line.trim()) return;
 
-    const grades = [
-      ["A+", 80], ["A", 75], ["A-", 70], ["B+", 65],
-      ["B", 60], ["B-", 55], ["C+", 50], ["C", 45], ["D", 40]
-    ];
+    const parts = line.trim().split(/\t+|\s{2,}/);
 
-    results.innerHTML = "";
+    if (parts.length < 4) return;
 
-    grades.forEach(g => {
-      const required = Math.round(((g[1] - inCourse) / 40) * 100);
-      results.innerHTML += `
-        <tr>
-          <td>${g[0]}</td>
-          <td>${g[1]}%</td>
-          <td>${required}%</td>
-        </tr>`;
-    });
-  }
+    if (isNaN(parts[2])) return;
+
+    const examMark = parts[2];
+    const obtMark = parts[3] === "--" ? "" : parts[3];
+
+    if (totals[index]) totals[index].value = examMark;
+    if (obtained[index]) obtained[index].value = obtMark;
+
+    index++;
+
+  });
+
+  calculate();
+}
+
+function score(obt, total, weight) {
+  if (!total) return 0;
+  return (obt / total) * weight;
+}
+
+function calculate() {
+
+  const inCourse =
+    score(+ct1_obt.value, +ct1_total.value, 2.5) +
+    score(+ct2_obt.value, +ct2_total.value, 2.5) +
+    score(+ct3_obt.value, +ct3_total.value, 2.5) +
+    score(+ct4_obt.value, +ct4_total.value, 2.5) +
+    score(+mid_obt.value, +mid_total.value, 20) +
+    score(+asg_obt.value, +asg_total.value, 10) +
+    score(+proj_obt.value, +proj_total.value, 10) +
+    score(+att_obt.value, +att_total.value, 10);
+
+  document.getElementById("inCourseDisplay").innerText =
+    "In-Course Marks: " + inCourse.toFixed(2) + " / 60";
+
+  const grades = [
+    ["A+", 80], ["A", 75], ["A-", 70], ["B+", 65],
+    ["B", 60], ["B-", 55], ["C+", 50], ["C", 45], ["D", 40]
+  ];
+
+  results.innerHTML = "";
+
+  grades.forEach(g => {
+
+    const required = Math.round(((g[1] - inCourse) / 40) * 100);
+
+    results.innerHTML += `
+      <tr>
+        <td>${g[0]}</td>
+        <td>${g[1]}%</td>
+        <td>${required}%</td>
+      </tr>`;
+  });
+}
+
 </script>
 </body>
 </html>
-
